@@ -192,7 +192,7 @@ export default function AdminDashboard() {
   if (!authed) return (
     <div style={{ minHeight: '100vh', background: bg, display: 'flex', flexDirection: 'column' }}>
       <header style={{ padding: '20px 24px', borderBottom: '1px solid #e8e8e4', background: '#fff' }}>
-        <img src="https://images.squarespace-cdn.com/content/v1/62f53cf782259c2dfb9f5a52/bb7a8b22-4196-4f35-acce-0b301d96fc55/splogo.png?format=400w" alt="ScalePassion" style={{ height: 28 }} />
+        <img src="/SP_logo.png" alt="ScalePassion" style={{ height: 28 }} />
       </header>
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ width: '100%', maxWidth: 380 }}>
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
   return (
     <div style={{ minHeight: '100vh', background: bg, display: 'flex', flexDirection: 'column' }}>
       <header style={{ padding: '20px 24px', borderBottom: '1px solid #e8e8e4', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <img src="https://images.squarespace-cdn.com/content/v1/62f53cf782259c2dfb9f5a52/bb7a8b22-4196-4f35-acce-0b301d96fc55/splogo.png?format=400w" alt="ScalePassion" style={{ height: 28 }} />
+        <img src="/SP_logo.png" alt="ScalePassion" style={{ height: 28 }} />
         <span style={{ fontSize: 12, color: '#aaa', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Admin</span>
       </header>
       <div style={{ flex: 1, padding: '2rem 1rem' }}>
