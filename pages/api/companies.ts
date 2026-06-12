@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 import { v4 as uuidv4 } from 'uuid';
 import { Company } from '../../lib/questions';
+
+const redis = new Redis({
+  url: process.env.scalepassionkv_KV_REST_API_URL!,
+  token: process.env.scalepassionkv_KV_REST_API_TOKEN!,
+});
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'changeme';
 function auth(req: NextApiRequest) { return req.headers['x-admin-secret'] === ADMIN_SECRET; }
@@ -9,9 +14,9 @@ function auth(req: NextApiRequest) { return req.headers['x-admin-secret'] === AD
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     if (!auth(req)) return res.status(401).json({ error: 'Unauthorized' });
-    const ids = ((await kv.smembers('company_ids')) as string[]) || [];
+    const ids = ((await redis.smembers('company_ids')) as string[]) || [];
     if (!ids.length) return res.json([]);
-    const companies = await Promise.all(ids.map(id => kv.get<Company>(`company:${id}`)));
+    const companies = await Promise.all(ids.map(id => redis.get<Company>(`company:${id}`)));
     return res.json(companies.filter(Boolean));
   }
   if (req.method === 'POST') {
@@ -20,15 +25,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!name) return res.status(400).json({ error: 'Name required' });
     const id = uuidv4();
     const company: Company = { id, name, createdAt: new Date().toISOString(), responses: [] };
-    await kv.set(`company:${id}`, company);
-    await kv.sadd('company_ids', id);
+    await redis.set(`company:${id}`, company);
+    await redis.sadd('company_ids', id);
     return res.json(company);
   }
   if (req.method === 'DELETE') {
     if (!auth(req)) return res.status(401).json({ error: 'Unauthorized' });
     const { id } = req.query as { id: string };
-    await kv.del(`company:${id}`);
-    await kv.srem('company_ids', id);
+    await redis.del(`company:${id}`);
+    await redis.srem('company_ids', id);
     return res.json({ ok: true });
   }
   res.status(405).end();
