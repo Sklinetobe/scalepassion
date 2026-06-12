@@ -37,7 +37,7 @@ async function sendNotification(company: Company, response: SurveyResponse) {
   const html = `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:32px 24px">
       <div style="margin-bottom:24px">
-        <img src="https://images.squarespace-cdn.com/content/v1/62f53cf782259c2dfb9f5a52/bb7a8b22-4196-4f35-acce-0b301d96fc55/splogo.png?format=400w" alt="ScalePassion" style="height:32px">
+        <img src="/SP_logo.png" alt="ScalePassion" style="height:32px">
       </div>
       <h2 style="font-size:20px;font-weight:500;color:#1a1a18;margin-bottom:4px">New response: ${company.name}</h2>
       <p style="font-size:14px;color:#888;margin-bottom:20px">${roleLabel} · ${response.name} · ${new Date(response.submittedAt).toLocaleString()}</p>
