@@ -61,7 +61,7 @@ async function sendNotification(company: Company, response: SurveyResponse) {
     headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: 'ScalePassion Survey <survey@scalepassion.com>',
-      to: 'steve@scalepassion.com',
+      to: 'ktobe@birdhat.com',
       subject,
       html,
     }),
