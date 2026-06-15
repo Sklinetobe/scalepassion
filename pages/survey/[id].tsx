@@ -42,9 +42,7 @@ export default function SurveyPage() {
   async function goNext() {
     const q = QUESTIONS[currentQ];
     const isOpen = q.type === 'open';
-    // Allow skipping open-ended (empty string counts)
-    const val = answers[currentQ];
-    if (!isOpen && val === null) return;
+    if (!isOpen && answers[currentQ] === null) return;
     if (currentQ < QUESTIONS.length - 1) { setCurrentQ(q => q + 1); return; }
     setSubmitting(true);
     await fetch('/api/respond', {
@@ -58,14 +56,14 @@ export default function SurveyPage() {
 
   const progress = (currentQ / QUESTIONS.length) * 100;
   const q = QUESTIONS[currentQ];
-  const isOpen = q.type === 'open';
+  const isOpen = q?.type === 'open';
   const openVal = typeof answers[currentQ] === 'string' ? answers[currentQ] as string : '';
 
   return (
     <div style={{ minHeight: '100vh', background: bg, display: 'flex', flexDirection: 'column' }}>
       <header style={{ padding: '20px 24px', borderBottom: '1px solid #e8e8e4', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <img src={LOGO} alt="ScalePassion" style={{ height: 28 }} />
-        <span style={{ fontSize: 12, color: '#aaa', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Radiate Purpose</span>
+        <span style={{ fontSize: 12, color: '#aaa', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>Radiate Purpose</span>
       </header>
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '2.5rem 1rem' }}>
@@ -82,7 +80,7 @@ export default function SurveyPage() {
                   { r: 'employee' as Role, title: "I'm a team member", desc: 'Your answers are anonymous and combined with others.' },
                 ].map(({ r, title, desc }) => (
                   <button key={r} onClick={() => chooseRole(r)}
-                    style={{ background: '#fff', border: '1.5px solid #e8e8e4', borderRadius: 12, padding: '1.25rem', textAlign: 'left', cursor: 'pointer', transition: 'border-color 0.15s' }}
+                    style={{ background: '#fff', border: '1.5px solid #e8e8e4', borderRadius: 12, padding: '1.25rem', textAlign: 'left' as const, cursor: 'pointer' }}
                     onMouseEnter={e => (e.currentTarget.style.borderColor = orange)}
                     onMouseLeave={e => (e.currentTarget.style.borderColor = '#e8e8e4')}>
                     <p style={{ fontWeight: 600, fontSize: 15, color: dark, marginBottom: 6 }}>{title}</p>
@@ -96,8 +94,9 @@ export default function SurveyPage() {
           {screen === 'name' && (
             <>
               <div style={{ width: 40, height: 4, background: orange, borderRadius: 99, marginBottom: '1.5rem' }} />
-              <h1 style={{ fontSize: 28, fontWeight: 600, color: dark, marginBottom: 10 }}>{role === 'founder' ? 'Welcome, founder.' : 'Add your perspective.'}</h1>
-              <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+              <h1 style={{ fontSize: 28, fontWeight: 600, color: dark, marginBottom: 16 }}>{role === 'founder' ? 'Welcome, founder.' : 'Add your perspective.'}</h1>
+              <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7, marginBottom: '1.25rem' }}>Something shifts when a company scales. The founder who used to know everything starts hearing less. The team starts saying more in the parking lot than in the meeting room. This survey is designed to surface what&apos;s not being said &mdash; so it can be. Your honest answers are what make that possible.</p>
+              <p style={{ fontSize: 14, color: '#888', lineHeight: 1.6, marginBottom: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #e8e8e4' }}>
                 {role === 'founder' ? 'Your answers are stored separately to compare against your team.' : 'Your name helps the founder understand who responded — your individual scores stay private.'}
               </p>
               {nameErr && <p style={{ fontSize: 13, color: '#c0392b', marginBottom: 10 }}>Please enter a name to continue.</p>}
@@ -116,25 +115,20 @@ export default function SurveyPage() {
               <div style={{ background: '#e8e8e4', borderRadius: 99, height: 4, marginBottom: '1.5rem' }}>
                 <div style={{ height: 4, borderRadius: 99, background: orange, width: `${progress}%`, transition: 'width 0.3s' }} />
               </div>
-              <p style={{ fontSize: 12, color: '#aaa', marginBottom: 8, letterSpacing: '0.04em' }}>Question {currentQ + 1} of {QUESTIONS.length}</p>
+              <p style={{ fontSize: 12, color: '#aaa', marginBottom: 8 }}>Question {currentQ + 1} of {QUESTIONS.length}</p>
               <p style={{ fontSize: 18, fontWeight: 500, color: dark, lineHeight: 1.6, marginBottom: '2rem' }}>{role === 'founder' ? q.tf : q.te}</p>
 
               {isOpen ? (
-                <>
-                  <textarea
-                    value={openVal}
-                    onChange={e => setOpenAnswer(e.target.value)}
-                    placeholder="Type your answer here... (optional)"
-                    rows={5}
-                    style={{ width: '100%', padding: '12px 14px', fontSize: 15, border: '1.5px solid #ddd', borderRadius: 8, background: '#fff', color: dark, outline: 'none', resize: 'vertical', marginBottom: '2rem', fontFamily: 'inherit', lineHeight: 1.6 }}
-                  />
-                </>
+                <textarea value={openVal} onChange={e => setOpenAnswer(e.target.value)}
+                  placeholder="Type your answer here... (optional)"
+                  rows={5}
+                  style={{ width: '100%', padding: '12px 14px', fontSize: 15, border: '1.5px solid #ddd', borderRadius: 8, background: '#fff', color: dark, outline: 'none', resize: 'vertical' as const, marginBottom: '2rem', fontFamily: 'inherit', lineHeight: 1.6 }} />
               ) : (
                 <>
                   <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                     {[1, 2, 3, 4, 5].map(v => (
                       <button key={v} onClick={() => selectAnswer(v)}
-                        style={{ flex: 1, aspectRatio: '1', border: answers[currentQ] === v ? `2px solid ${orange}` : '1.5px solid #ddd', borderRadius: 10, background: answers[currentQ] === v ? '#FEF0E6' : '#fff', fontSize: 16, fontWeight: 600, color: answers[currentQ] === v ? orange : '#999', cursor: 'pointer', transition: 'all 0.12s' }}>
+                        style={{ flex: 1, aspectRatio: '1', border: answers[currentQ] === v ? `2px solid ${orange}` : '1.5px solid #ddd', borderRadius: 10, background: answers[currentQ] === v ? '#FEF0E6' : '#fff', fontSize: 16, fontWeight: 600, color: answers[currentQ] === v ? orange : '#999', cursor: 'pointer' }}>
                         {v}
                       </button>
                     ))}
@@ -148,7 +142,7 @@ export default function SurveyPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <button onClick={() => currentQ > 0 && setCurrentQ(q => q - 1)} style={{ visibility: currentQ === 0 ? 'hidden' : 'visible', background: 'transparent', border: '1px solid #ddd', borderRadius: 8, padding: '10px 20px', fontSize: 14, color: '#666', cursor: 'pointer' }}>Back</button>
                 <button onClick={goNext} disabled={!isOpen && answers[currentQ] === null || submitting}
-                  style={{ background: (isOpen || answers[currentQ] !== null) ? orange : '#ddd', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'background 0.15s' }}>
+                  style={{ background: (isOpen || answers[currentQ] !== null) ? orange : '#ddd', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                   {submitting ? 'Submitting...' : currentQ === QUESTIONS.length - 1 ? 'Submit' : 'Next'}
                 </button>
               </div>
@@ -159,11 +153,12 @@ export default function SurveyPage() {
             <>
               <div style={{ width: 40, height: 4, background: orange, borderRadius: 99, marginBottom: '1.5rem' }} />
               <h1 style={{ fontSize: 28, fontWeight: 600, color: dark, marginBottom: 12 }}>You're done.</h1>
-              <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
+              <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7, marginBottom: '1.25rem' }}>
                 {role === 'founder'
                   ? 'Your perspective is saved. Share the survey link with your team — the gap analysis unlocks once responses come in.'
                   : 'Your response has been added to the aggregate. The founder will see the gap analysis in their dashboard. Your individual answers are private.'}
               </p>
+              <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7, marginBottom: '2rem', paddingTop: '1rem', borderTop: '1px solid #e8e8e4' }}>Thank you for taking the time to answer honestly. What you shared matters — it's the kind of input that rarely makes it into a meeting room but almost always needs to.</p>
               <div style={{ background: '#fff', border: '1px solid #e8e8e4', borderRadius: 12, padding: '1.25rem', display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 8, background: '#FEF0E6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>🔥</div>
                 <div>
@@ -177,7 +172,7 @@ export default function SurveyPage() {
         </div>
       </div>
 
-      <footer style={{ padding: '16px 24px', borderTop: '1px solid #e8e8e4', background: '#fff', textAlign: 'center', fontSize: 12, color: '#bbb' }}>
+      <footer style={{ padding: '16px 24px', borderTop: '1px solid #e8e8e4', background: '#fff', textAlign: 'center' as const, fontSize: 12, color: '#bbb' }}>
         © ScalePassion 2026 · <a href="https://scalepassion.com" style={{ color: '#bbb' }}>scalepassion.com</a>
       </footer>
     </div>
