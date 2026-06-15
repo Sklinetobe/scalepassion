@@ -5,7 +5,7 @@ const orange = '#E8650A';
 const dark = '#1a1a18';
 const bg = '#f8f8f6';
 
-function avg(arr: number[]) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function avg(arr: (number | string)[]) { const nums = arr.filter(v => typeof v === "number") as number[]; return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0; }
 
 function GapBar({ label, value, color }: { label: string; value: number; color: string }) {
   return (
@@ -27,7 +27,7 @@ function CompanyDetail({ company, onBack, secret }: { company: Company; onBack: 
   const surveyUrl = typeof window !== 'undefined' ? `${window.location.origin}/survey/${company.id}` : '';
 
   const gaps = QUESTIONS.map((q, i) => {
-    const fv = founder ? founder.answers[i] : null;
+    const fv = founder && typeof founder.answers[i] === "number" ? founder.answers[i] as number : null;
     const empAvg = employees.length ? avg(employees.map(e => e.answers[i])) : null;
     const gap = fv !== null && empAvg !== null ? Math.abs(fv - empAvg) : null;
     return { q, fv, empAvg, gap };
