@@ -93,7 +93,7 @@ function CompanyDetail({ company, onBack, secret }: { company: Company; onBack: 
       {tab === 'gaps' && (
         <div>
           {!founder && !employees.length && <p style={{ color: '#aaa', fontSize: 14 }}>No responses yet.</p>}
-          {gaps.map(({ q, fv, empAvg, gap }, i) => (
+          {gaps.filter(g => g.q.type !== 'open').map(({ q, fv, empAvg, gap }, i) => (
             <div key={q.id} style={{ marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ fontSize: 14, fontWeight: 500, color: dark }}>{q.cat}</span>
@@ -115,15 +115,28 @@ function CompanyDetail({ company, onBack, secret }: { company: Company; onBack: 
         <div>
           {!company.responses.length && <p style={{ color: '#aaa', fontSize: 14 }}>No responses yet.</p>}
           {company.responses.map((r, i) => (
-            <div key={i} style={{ background: '#f4f4f1', borderRadius: 8, padding: '10px 14px', marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 13, color: dark }}>{r.name}</span>
-                {r.role === 'founder' && <span style={{ fontSize: 11, background: '#FEF0E6', color: orange, padding: '2px 6px', borderRadius: 99, fontWeight: 600 }}>Founder</span>}
+            <div key={i} style={{ background: '#f4f4f1', borderRadius: 8, padding: '12px 14px', marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: dark }}>{r.name}</span>
+                  {r.role === 'founder' && <span style={{ fontSize: 11, background: '#FEF0E6', color: orange, padding: '2px 6px', borderRadius: 99, fontWeight: 600 }}>Founder</span>}
+                </div>
+                <span style={{ fontSize: 12, color: '#aaa' }}>{new Date(r.submittedAt).toLocaleString()}</span>
               </div>
-              <span style={{ fontSize: 12, color: '#aaa' }}>{new Date(r.submittedAt).toLocaleString()}</span>
+              {QUESTIONS.filter(q => q.type === 'open').map((q, qi) => {
+                const qIndex = QUESTIONS.indexOf(q);
+                const val = r.answers[qIndex];
+                if (!val) return null;
+                return (
+                  <div key={qi} style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid #e8e8e4' }}>
+                    <p style={{ fontSize: 11, color: '#aaa', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{q.cat}</p>
+                    <p style={{ fontSize: 13, color: dark, lineHeight: 1.6, fontStyle: 'italic' }}>"{val}"</p>
+                  </div>
+                );
+              })}
             </div>
           ))}
-          <p style={{ fontSize: 12, color: '#ccc', marginTop: 8 }}>Individual answers are not displayed — only aggregates are used in the gap analysis.</p>
+          <p style={{ fontSize: 12, color: '#ccc', marginTop: 8 }}>Scale question scores are not shown individually — only aggregates are used in the gap analysis.</p>
         </div>
       )}
 
